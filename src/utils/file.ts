@@ -23,7 +23,7 @@ export function findParentPath(from: Str, name: Str, directory: Bool, stopAt: Nu
 }
 
 export function isSubDirOrEq(sub: Str, parent: Str): Bool {
-  return path.relative(sub, parent).startsWith('..');
+  return !path.relative(parent, sub).startsWith('..');
 }
 
 export function isSubFile(sub: Str, parent: Str): Bool {

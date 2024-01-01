@@ -44,7 +44,6 @@ export async function compileScript(file: Str, config: Config): Promise<Str> {
           rootDir: config.rootDir,
           sourceMap: config.debug,
         },
-        filterRoot: false,
       }),
       commonJsPlugin(),
       nodeResolvePlugin({
