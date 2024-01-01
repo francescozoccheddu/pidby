@@ -7,10 +7,11 @@ import { loadConfig } from 'pidby/loadConfig';
 import { makeCaptureTaskForConfig } from 'pidby/pipeline/capture';
 import { serve } from 'pidby/pipeline/serve';
 import { makeWatchTaskForConfigFile } from 'pidby/pipeline/watch';
+import { getAppInfo } from 'pidby/utils/app';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-import packageJson from '../package.json';
+const appInfo = getAppInfo();
 
 async function watch(configFile: Str, port: Num): Promise<void> {
   await orPrintExc(async () => {
@@ -71,12 +72,12 @@ function main(): void {
         .strict(),
       argv => run(argv.config_file, argv.out_file),
     )
-    .scriptName('pidby')
+    .scriptName(appInfo.name)
     .demandCommand()
     .alias('v', 'version')
     .alias('h', 'help')
     .help('help')
-    .version(packageJson.version)
+    .version(appInfo.version)
     .strict()
     .parse();
 }

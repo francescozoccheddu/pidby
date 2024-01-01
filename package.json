@@ -1,6 +1,6 @@
 {
   "name": "@francescozoccheddu/pidby",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Web to PDF creator",
   "author": "Francesco Zoccheddu (https://github.com/francescozoccheddu/)",
   "homepage": "https://github.com/francescozoccheddu/pidby#readme",
@@ -27,12 +27,16 @@
   ],
   "scripts": {
     "start": "tsx --tsconfig ./tsconfig.json ./src/main.ts",
-    "build": "shx rm -rf dist tsconfig.tsbuildinfo && eslint ./src && tsc --project ./tsconfig.json && tsc-alias -p tsconfig.json && npm-prepare-dist -s build -s start -s lint -f LICENSE -f README.md && shx cp -r schema/* dist && lobe-shebang -t ./dist/main.js && shx chmod +x dist/main.js",
-    "lint": "tsc --noEmit --project ./tsconfig.json && eslint ./src"
+    "build": "shx rm -rf dist tsconfig.tsbuildinfo && eslint ./src && tsc --project ./tsconfig.json && tsc-alias -p tsconfig.json && npm-prepare-dist -s build -s start -s lint -s publish -f LICENSE -f README.md && shx cp -r schema/* dist && lobe-shebang -t ./dist/main.js && shx chmod +x dist/main.js",
+    "lint": "tsc --noEmit --project ./tsconfig.json && eslint ./src",
+    "publish": "npm run build && cd dist && npm publish --access public"
   },
-  "bin": "./main.js",
+  "bin": {
+    "pidby": "./main.js"
+  },
   "devDependencies": {
     "@lobehub/cli-shebang": "^1.0.1",
+    "@tsconfig/strictest": "^2.0.2",
     "@types/command-exists": "^1.2.3",
     "@types/ejs": "^3.1.5",
     "@types/js-yaml": "^4.0.9",
@@ -42,8 +46,8 @@
     "@types/postcss-import": "^14.0.3",
     "@types/pug": "^2.0.10",
     "@types/yargs": "^17.0.32",
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/parser": "^6.17.0",
     "eslint": "^8.56.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
@@ -52,7 +56,8 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "npm-prepare-dist": "^0.4.1",
     "shx": "^0.3.4",
-    "tsc-alias": "^1.8.8"
+    "tsc-alias": "^1.8.8",
+    "tsx": "^4.7.0"
   },
   "dependencies": {
     "@francescozoccheddu/ts-goodies": "^0.0.5",
@@ -60,12 +65,13 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.5",
-    "@tsconfig/strictest": "^2.0.2",
+    "@types/find-package-json": "^1.2.6",
     "ajv": "^8.12.0",
     "autoprefixer": "^10.4.16",
     "chokidar": "^3.5.3",
     "command-exists": "^1.2.9",
     "ejs": "^3.1.9",
+    "find-package-json": "^1.2.0",
     "get-tsconfig": "^4.7.2",
     "ghostscript-node": "^1.5.0",
     "js-yaml": "^4.1.0",
@@ -79,7 +85,6 @@
     "rollup": "^4.9.2",
     "rollup-plugin-memory-fs": "^1.0.3",
     "sass": "^1.69.6",
-    "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "yargs": "^17.7.2"
   }
