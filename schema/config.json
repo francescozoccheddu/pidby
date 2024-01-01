@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/francescozoccheddu/pidby/schemas/config.json",
+  "title": "Pidby configuration",
+  "description": "The Pidby configuration file",
+  "type": "object",
+  "$defs": {
+    "filePath": {
+      "type": "string",
+      "pattern": "^[0-9a-zA-Z_\\-. /]+$"
+    },
+    "nullablefilePath": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/filePath"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "properties": {
+    "layout": {
+      "title": "Layout",
+      "description": "The layout of the output PDF document",
+      "enum": [
+        "a4"
+      ]
+    },
+    "pageFiles": {
+      "title": "Page files",
+      "description": "The file paths of the Pug, Ejs or Html page templates (absolute or relative to the config file)",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/filePath",
+        "title": "Page file",
+        "description": "The file path of the Pug, Ejs or Html page template (absolute or relative to the config file)"
+      },
+      "minItems": 1
+    },
+    "nodeModulesDir": {
+      "title": "'node_modules' directory",
+      "description": "A \"node_modules\" directory to consider when resolving imports from style or script resources, if not null (absolute or relative to the config file)",
+      "$ref": "#/$defs/nullablefilePath",
+      "default": "null"
+    },
+    "optimize": {
+      "title": "Optimize output PDF",
+      "description": "Whether to compress the output PDF file (the 'gs' Ghostscript command must be available in the environment)",
+      "type": "boolean",
+      "default": "false"
+    },
+    "tsConfigFile": {
+      "title": "'tsconfig.json' file",
+      "description": "The file path of the TypeScript 'tsconfig.json' config file used to compile each script, if not null (absolute or relative to the config file)",
+      "$ref": "#/$defs/nullablefilePath",
+      "default": "null"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "layout",
+    "pageFiles"
+  ]
+}

@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../schema/config.json
+layout: "a4"
+pageFiles:
+  - "/pages/page-1.pug"
+  - "pages/page-2.ejs"
+  - "pages/page-3.html"
+optimize: true

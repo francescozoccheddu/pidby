@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "checkJs": false,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "module": "CommonJS",
+    "target": "ESNext",
+    "rootDir": "./src",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "paths": {
+      "pidby/*": [
+        "./src/*"
+      ],
+      "schema/*": [
+        "./schema/*"
+      ],
+    }
+  },
+  "include": [
+    "./src/**/*.ts"
+  ]
+}

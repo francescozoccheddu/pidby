@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "configurations": [
+    {
+      "name": "Debug dev",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/tsx",
+      "program": "${workspaceRoot}/src/main.ts",
+      "runtimeArgs": [
+        "--tsconfig",
+        "${workspaceRoot}/tsconfig.json",
+      ],
+      "args": [
+        "dev",
+        "example/config.yml"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**",
+      ],
+    },
+    {
+      "name": "Debug run",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/tsx",
+      "program": "${workspaceRoot}/src/main.ts",
+      "runtimeArgs": [
+        "--tsconfig",
+        "${workspaceRoot}/tsconfig.json",
+      ],
+      "args": [
+        "run",
+        "example/config.yml",
+        "example/out.pdf",
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**",
+      ],
+    }
+  ]
+}
