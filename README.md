@@ -18,5 +18,5 @@ You can try it with the included [example](/example):
 ```shell
 git clone https://github.com/francescozoccheddu/pidby
 cd pidby
-pidby example/config.yml output.pdf
+pidby run example/config.yml output.pdf
 ```

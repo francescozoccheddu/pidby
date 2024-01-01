@@ -1,7 +1,7 @@
 import '@francescozoccheddu/ts-goodies/globals/augmentations';
 
 import { orThrowAsync } from '@francescozoccheddu/ts-goodies/errors';
-import { prExc } from '@francescozoccheddu/ts-goodies/logs';
+import { prDone, prExc } from '@francescozoccheddu/ts-goodies/logs';
 import fs from 'fs';
 import { loadConfig } from 'pidby/loadConfig';
 import { makeCaptureTaskForConfig } from 'pidby/pipeline/capture';
@@ -24,6 +24,7 @@ async function run(configFile: Str, outFile: Str): Promise<void> {
     const config = loadConfig(configFile);
     const pdf = await serve(makeCaptureTaskForConfig(config));
     fs.writeFileSync(outFile, pdf);
+    prDone('PDF file generated successfully', { outputFile: outFile });
   });
 }
 

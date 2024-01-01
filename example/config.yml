@@ -4,4 +4,3 @@ pageFiles:
   - "/pages/page-1.pug"
   - "pages/page-2.ejs"
   - "pages/page-3.html"
-optimize: true
