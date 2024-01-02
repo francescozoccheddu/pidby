@@ -1,4 +1,4 @@
-# Pidby
+# pidby
 PDF creator from web pages with built-in [Pug](https://pugjs.org/), [EJS](https://ejs.co/), [Sass](https://sass-lang.com/) and [TypeScript](https://www.typescriptlang.org/) support.
 
 ## Installation
