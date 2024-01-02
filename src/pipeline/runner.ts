@@ -106,7 +106,6 @@ function makeResolver(config: Config): Resolver {
       debugName: 'page',
       extensions: ['pug', 'html', 'ejs'],
       resolver(file): ResolvedFile {
-        // TODO: inject keyboard controls and live reloading
         return {
           data: compilePage(file, config),
           mimeType: 'text/html',
