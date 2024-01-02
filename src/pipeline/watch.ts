@@ -3,15 +3,15 @@ import { watch as chokidarWatch, WatchOptions } from 'chokidar';
 import path from 'path';
 import { Config, ensureValidConfig } from 'pidby/config';
 import { loadConfig } from 'pidby/loadConfig';
-import { ServeInstance, Task } from 'pidby/pipeline/serve';
-import { normalizePath, resolvePathToUrl } from 'pidby/utils/file';
+import { Task, TaskRunner } from 'pidby/pipeline/runner';
+import { normPath, resolvePathToUrl } from 'pidby/utils/files';
 
-export async function watchTask(instance: ServeInstance, configFile: Str, delay: Num = 0.5): Promise<void> {
+export async function watchTask(runner: TaskRunner, configFile: Str, delay: Num = 0.5): Promise<void> {
   function tryLoadConfig(): Config | Nul {
     try {
       const config = loadConfig(configFile);
       ensureValidConfig(config);
-      const pageUrls = config.pageFiles.map(f => resolvePathToUrl(f, config.rootDir, instance.rootUrl));
+      const pageUrls = config.pageFiles.map(f => resolvePathToUrl(f, config.rootDir, runner.url));
       prDone('Loaded config', {
         file: configFile,
         pageUrls,
@@ -27,16 +27,16 @@ export async function watchTask(instance: ServeInstance, configFile: Str, delay:
   let config: Config | Nul = null;
   function updateConfig(): void {
     config ??= tryLoadConfig();
-    instance.config(config);
+    runner.config = config;
     if (config) {
       prDone('Setup config', {
         file: configFile,
       });
     }
   }
-  const rootDir = normalizePath(path.dirname(configFile));
+  const rootDir = normPath(path.dirname(configFile));
   prDone('Listening…', {
-    rootUrl: instance.rootUrl,
+    rootUrl: runner.url,
     rootDir,
   });
   let timeoutId: NodeJS.Timeout | Nul = null;
@@ -51,7 +51,6 @@ export async function watchTask(instance: ServeInstance, configFile: Str, delay:
     onFileChange();
   }
   updateConfig();
-  instance.config(config);
   const watcherOpts: WatchOptions = {
     ignoreInitial: true,
   };

@@ -1,5 +1,5 @@
-export type { Task, ServeInstance } from 'pidby/pipeline/serve';
-export { serve } from 'pidby/pipeline/serve';
+export type { Task, TaskRunner } from 'pidby/pipeline/runner';
+export { run } from 'pidby/pipeline/runner';
 export { captureTask, makeCaptureTaskForConfig } from 'pidby/pipeline/capture';
 export { watchTask, makeWatchTaskForConfigFile } from 'pidby/pipeline/watch';
 export { loadConfig } from 'pidby/loadConfig';

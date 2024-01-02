@@ -1,6 +1,6 @@
 import { orThrow, orThrowAsync } from '@francescozoccheddu/ts-goodies/errors';
 import { Info } from '@francescozoccheddu/ts-goodies/logs';
-import { fileExt } from 'pidby/utils/file';
+import { fileExt } from 'pidby/utils/files';
 
 export type DialectProcessor<TOut, TProcessorArgs extends AnyArr> = (...args: TProcessorArgs) => TOut;
 

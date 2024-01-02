@@ -2,7 +2,7 @@ import { orThrow } from '@francescozoccheddu/ts-goodies/errors';
 import path from 'path';
 import { Auto, auto, Config, Layout } from 'pidby/config';
 import { createJsonValidator, JsonValidator, loadJson } from 'pidby/process/loadJson';
-import { resolvePath } from 'pidby/utils/file';
+import { resolvePath } from 'pidby/utils/files';
 import schema from 'schema/config.json';
 
 let jsonValidator: JsonValidator<RawConfig> | Nul = null;

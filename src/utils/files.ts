@@ -1,21 +1,18 @@
 import { orThrow } from '@francescozoccheddu/ts-goodies/errors';
 import fs from 'fs';
-import path from 'path';
+import p from 'path';
+import { joinUrl } from 'pidby/utils/net';
 
 export function readTextFile(file: Str): Str {
   return orThrow(() => fs.readFileSync(file, 'utf8'), 'Failed to read file', { file });
 }
 
-export function readFile(file: Str): Buffer {
-  return orThrow(() => fs.readFileSync(file), 'Failed to read file', { file });
-}
-
-export function normalizePath(file: Str): Str {
-  return path.normalize(process.platform === 'win32' ? file.toLowerCase() : file);
+export function normPath(file: Str): Str {
+  return p.normalize(process.platform === 'win32' ? file.toLowerCase() : file);
 }
 
 export function isSamePath(a: Str, b: Str): Bool {
-  return path.normalize(path.resolve(a)) === path.normalize(path.resolve(b));
+  return p.normalize(p.resolve(a)) === p.normalize(p.resolve(b));
 }
 
 export function findParentPath(from: Str, name: Str, directory: Bool, stopAt: Num | Str = 64): Str {
@@ -23,15 +20,15 @@ export function findParentPath(from: Str, name: Str, directory: Bool, stopAt: Nu
 }
 
 export function isSubDirOrEq(sub: Str, parent: Str): Bool {
-  return !path.relative(parent, sub).startsWith('..');
+  return !p.relative(parent, sub).startsWith('..');
 }
 
 export function isSubFile(sub: Str, parent: Str): Bool {
-  return isSubDirOrEq(path.dirname(sub), parent);
+  return isSubDirOrEq(p.dirname(sub), parent);
 }
 
 export function findParentPaths(from: RArr<Str>, name: Str, directory: Bool, multiple: Bool = false, stopAt: Num | Str = 64): RArr<Str> {
-  const normName = normalizePath(name);
+  const normName = normPath(name);
   const found = new Set<Str>();
   const maxDepth = isNum(stopAt) ? stopAt : Infinity;
   const maxDir = isStr(stopAt) ? stopAt : null;
@@ -43,9 +40,9 @@ export function findParentPaths(from: RArr<Str>, name: Str, directory: Bool, mul
         if (depth > maxDepth || (maxDir !== null && isSubDirOrEq(maxDir, dir))) {
           return true;
         }
-        const candidates = [path.join(dir, name), dir];
+        const candidates = [p.join(dir, name), dir];
         for (const candidate of candidates) {
-          if (normName === path.basename(candidate) && fs.existsSync(candidate) && fs.lstatSync(candidate).isDirectory() === directory) {
+          if (normName === p.basename(candidate) && fs.existsSync(candidate) && fs.lstatSync(candidate).isDirectory() === directory) {
             found.add(candidate);
             if (!multiple) {
               return true;
@@ -60,9 +57,9 @@ export function findParentPaths(from: RArr<Str>, name: Str, directory: Bool, mul
 }
 
 function walkUp(from: Str, func: (dir: Str) => Bool): void {
-  let current = normalizePath(from);
+  let current = normPath(from);
   while (!func(current)) {
-    const next = path.dirname(current);
+    const next = p.dirname(current);
     if (next === current) {
       break;
     }
@@ -71,15 +68,15 @@ function walkUp(from: Str, func: (dir: Str) => Bool): void {
 }
 
 export function resolvePath(file: Str, currentDir: Str, rootDir: Str | Nul = null): Str {
-  if (rootDir !== null && path.isAbsolute(file)) {
-    return normalizePath(path.join(rootDir, file));
+  if (rootDir !== null && p.isAbsolute(file)) {
+    return normPath(p.join(rootDir, file));
   } else {
-    return normalizePath(path.resolve(currentDir, file));
+    return normPath(p.resolve(currentDir, file));
   }
 }
 
 export function fileExt(file: Str): Str {
-  const basename = path.basename(file);
+  const basename = p.basename(file);
   const lastDot = basename.lastIndexOf('.');
   if (lastDot < 0) {
     return '';
@@ -87,34 +84,19 @@ export function fileExt(file: Str): Str {
   return basename.slice(lastDot + 1).toLowerCase();
 }
 
-export function joinUrl(a: Str, b: Str): Str {
-  const url = new URL(a);
-  url.pathname = path.posix.join(pathToUrl(url.pathname), pathToUrl(b));
-  return url.toString();
-}
-
-export function pathToUrl(url: Str): Str {
-  return path.posix.normalize(url.replaceAll(path.win32.sep, path.posix.sep));
+export function pathToUrl(path: Str): Str {
+  return p.posix.normalize(path.replaceAll(p.win32.sep, p.posix.sep));
 }
 
 export function resolvePathToUrl(file: Str, rootDir: Str, baseUrl: Str): Str {
-  const relFile = pathToUrl(path.relative(rootDir, file)).stripStart('.').stripStart('/');
+  const relFile = pathToUrl(p.relative(rootDir, file)).stripStart('.').stripStart('/');
   return joinUrl(baseUrl, relFile);
 }
 
-export function isDir(file: Str): Bool {
-  return fs.existsSync(file) && fs.lstatSync(file).isDirectory();
+export function isExistingDir(path: Str): Bool {
+  return fs.existsSync(path) && fs.lstatSync(path).isDirectory();
 }
 
-export function isFile(file: Str): Bool {
-  return fs.existsSync(file) && fs.lstatSync(file).isFile();
-}
-
-export function canWriteFile(file: Str): Bool {
-  try {
-    fs.accessSync(file, fs.constants.W_OK);
-    return true;
-  } catch {
-    return false;
-  }
+export function isExistingFile(path: Str): Bool {
+  return fs.existsSync(path) && fs.lstatSync(path).isFile();
 }

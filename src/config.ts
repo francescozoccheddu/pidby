@@ -1,10 +1,20 @@
 import { Info, prWarn } from '@francescozoccheddu/ts-goodies/logs';
 import { getTsconfig } from 'get-tsconfig';
 import { canOptimize, optimizeCommand, optimizeProgram } from 'pidby/capture/optimizePdf';
-import { findParentPaths, isDir, isFile, isSubDirOrEq, isSubFile } from 'pidby/utils/file';
+import { findParentPaths, isExistingDir, isExistingFile, isSubDirOrEq, isSubFile } from 'pidby/utils/files';
 
 export enum Layout {
-  a4 = 'a4'
+  letter = 'letter',
+  legal = 'legal',
+  tabloid = 'tabloid',
+  ledger = 'ledger',
+  a0 = 'a0',
+  a1 = 'a1',
+  a2 = 'a2',
+  a3 = 'a3',
+  a4 = 'a4',
+  a5 = 'a5',
+  a6 = 'a6',
 }
 
 export const auto = Symbol();
@@ -73,13 +83,13 @@ export function ensureValidConfig(config: Config): void {
       err('Invalid config', { ...info, property: key, value: value === auto ? undefined : value, reason: msg });
     }
   }
-  ensureProp('rootDir', isDir, 'Not a directory');
+  ensureProp('rootDir', isExistingDir, 'Not a directory');
   ensureProp('tsConfigFile', f => !isStr(f) || isSubFile(f, config.rootDir), 'Path is outside root');
-  ensureProp('tsConfigFile', f => !isStr(f) || isFile(f), 'Not a file');
+  ensureProp('tsConfigFile', f => !isStr(f) || isExistingFile(f), 'Not a file');
   ensureProp('nodeModulesDir', f => !isStr(f) || isSubDirOrEq(f, config.rootDir), 'Path is outside root');
-  ensureProp('nodeModulesDir', f => !isStr(f) || isDir(f), 'Not a dir');
+  ensureProp('nodeModulesDir', f => !isStr(f) || isExistingDir(f), 'Not a dir');
   for (const [i, pageFile] of config.pageFiles.entries()) {
     ensure('pageFiles', pageFile, f => isSubFile(f, config.rootDir), 'Path is outside root', { index: i });
-    ensure('pageFiles', pageFile, isFile, 'Not a file', { index: i });
+    ensure('pageFiles', pageFile, isExistingFile, 'Not a file', { index: i });
   }
 }

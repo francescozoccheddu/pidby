@@ -5,7 +5,7 @@ import { prDone, prExc } from '@francescozoccheddu/ts-goodies/logs';
 import fs from 'fs';
 import { loadConfig } from 'pidby/loadConfig';
 import { makeCaptureTaskForConfig } from 'pidby/pipeline/capture';
-import { serve } from 'pidby/pipeline/serve';
+import { run } from 'pidby/pipeline/runner';
 import { makeWatchTaskForConfigFile } from 'pidby/pipeline/watch';
 import { getAppInfo } from 'pidby/utils/app';
 import { hideBin } from 'yargs/helpers';
@@ -13,16 +13,16 @@ import yargs from 'yargs/yargs';
 
 const appInfo = getAppInfo();
 
-async function watch(configFile: Str, port: Num): Promise<void> {
+async function cmdDev(configFile: Str, port: Num): Promise<void> {
   await orPrintExc(async () => {
-    await serve(makeWatchTaskForConfigFile(configFile), port);
+    await run(makeWatchTaskForConfigFile(configFile), port);
   });
 }
 
-async function run(configFile: Str, outFile: Str): Promise<void> {
+async function cmdRun(configFile: Str, outFile: Str): Promise<void> {
   await orPrintExc(async () => {
     const config = loadConfig(configFile);
-    const pdf = await serve(makeCaptureTaskForConfig(config));
+    const pdf = await run(makeCaptureTaskForConfig(config));
     fs.writeFileSync(outFile, pdf);
     prDone('PDF file generated successfully', { outputFile: outFile });
   });
@@ -54,7 +54,7 @@ function main(): void {
           alias: 'p',
         })
         .strict(),
-      argv => watch(argv.config_file, argv.port),
+      argv => cmdDev(argv.config_file, argv.port),
     )
     .command(
       'run <config_file> <out_file>',
@@ -71,7 +71,7 @@ function main(): void {
           demandOption: true,
         })
         .strict(),
-      argv => run(argv.config_file, argv.out_file),
+      argv => cmdRun(argv.config_file, argv.out_file),
     )
     .scriptName(appInfo.name)
     .demandCommand()

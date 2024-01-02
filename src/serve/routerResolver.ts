@@ -1,6 +1,6 @@
 import { prDebug } from '@francescozoccheddu/ts-goodies/logs';
 import { Resolver } from 'pidby/serve/server';
-import { fileExt } from 'pidby/utils/file';
+import { fileExt } from 'pidby/utils/files';
 
 export type Route = R<{
   extensions: RArr<Str>;

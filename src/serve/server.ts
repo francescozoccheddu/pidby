@@ -1,15 +1,11 @@
 import { orThrow, orThrowAsync } from '@francescozoccheddu/ts-goodies/errors';
 import { prExc } from '@francescozoccheddu/ts-goodies/logs';
-import { randInt } from '@francescozoccheddu/ts-goodies/math';
 import { Server as KoaServer } from 'http';
 import Koa from 'koa';
 import send from 'koa-send';
 import path from 'path';
-import { isFile, resolvePath } from 'pidby/utils/file';
-
-export function randomPort(): Num {
-  return randInt(1024, 65535);
-}
+import { isExistingFile, resolvePath } from 'pidby/utils/files';
+import { randomPort } from 'pidby/utils/net';
 
 export type ResolvedFile = R<{
   data: Buffer | Str;
@@ -25,6 +21,8 @@ export type RetrieverFilter = R<{
   retrieve: Resolver;
 }>
 
+export type ServeErrorHandler = (e: Unk, file: Str, url: Str) => void;
+
 export class Server {
 
   private readonly _app: Koa;
@@ -33,6 +31,7 @@ export class Server {
   readonly port: Num;
   rootDir: Str | Nul;
   resolver: Resolver;
+  onError: ServeErrorHandler;
 
   constructor(host: Str = '127.0.0.1', port: Num = randomPort()) {
     this.host = host;
@@ -41,11 +40,12 @@ export class Server {
     this._server = null;
     this.rootDir = null;
     this.resolver = noResolver;
+    this.onError = (e, file, url): void => prExc(e, 'Error while serving', { file, url });
     this._app.use(async ctx => {
       if (this.rootDir) {
         const urlPath = path.posix.normalize(ctx.URL.pathname).stripStart('.').stripStart('/');
         const file = resolvePath(urlPath, this.rootDir, this.rootDir);
-        if (isFile(file)) {
+        if (isExistingFile(file)) {
           try {
             const resolved = await this.resolver(file);
             if (resolved) {
@@ -55,8 +55,7 @@ export class Server {
               await send(ctx, ctx.path, { root: this.rootDir });
             }
           } catch (e) {
-            prExc(e, 'Error while serving');
-            this.stop();
+            this.onError(e, file, ctx.url);
           }
         } else {
           ctx.status = 404;
@@ -67,10 +66,6 @@ export class Server {
 
   get running(): Bool {
     return this._server?.listening ?? false;
-  }
-
-  get url(): Str {
-    return `http://${this.host}:${this.port}`;
   }
 
   async start(): Promise<void> {
