@@ -1,0 +1,29 @@
+@use "./box"
+
+#data
+  @extend %box
+  display: grid
+  grid-template-columns: 13em 1fr
+  column-gap: 1em
+  max-width: 50em
+
+  .key, .value
+    font-family: monospace
+    font-size: 0.9em
+    text-overflow: ellipsis
+    white-space: nowrap
+    max-lines: 1
+    overflow: hidden
+
+  .key
+    font-weight: bold
+    color: gray
+    margin: 0.25em 0em
+    grid-column: 1
+
+  .key::after
+    content: ':'
+
+  .value
+    margin: 0.25em 0em
+    grid-column: 2

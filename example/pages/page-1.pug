@@ -2,10 +2,16 @@ html
   head
     link(href="/style/main.sass" rel="stylesheet" type="text/css")
   body
-    h1 Page 1
+    h1 Page #{page+1}
     h2 Pidby example
     p
       span Today is 
       span#today
       span .
+    p 
+      span This is a dynamically loaded YAML:
+      #data
+        each val, key in yaml("/data/data.yml")
+          .key #{key}
+          .value #{val}
     script(src="/scripts/setupToday.ts" type="text/javascript")

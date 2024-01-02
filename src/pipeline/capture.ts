@@ -6,6 +6,7 @@ import { Task, TaskRunner } from 'pidby/pipeline/runner';
 
 export async function captureTask(runner: TaskRunner, config: Config): Promise<Buffer> {
   runner.config = config;
+  // TODO: immediately fail on error
   const pageUrls = config.pageFiles.map(f => runner.fileUrl(f));
   const pdfs = await capturePdfs(pageUrls, config.layout);
   const singlePdf = await combinePdfs(pdfs);

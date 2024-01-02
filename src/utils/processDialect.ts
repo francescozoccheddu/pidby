@@ -2,12 +2,10 @@ import { orThrow, orThrowAsync } from '@francescozoccheddu/ts-goodies/errors';
 import { Info } from '@francescozoccheddu/ts-goodies/logs';
 import { fileExt } from 'pidby/utils/files';
 
-export type DialectProcessor<TOut, TProcessorArgs extends AnyArr> = (...args: TProcessorArgs) => TOut;
-
-export type Dialect<TDialectKey extends Str, TOut, TProcessorArgs extends AnyArr = []> = R<{
-  key: TDialectKey;
+export type Dialect<TKey extends Str, TOut, TProcessorArgs extends AnyArr = []> = R<{
+  key: TKey;
   extensions: RArr<Str>;
-  processor: DialectProcessor<TOut, TProcessorArgs>;
+  processor: (...args: TProcessorArgs) => TOut;
 }>
 
 function dialectToInfo<TDialectKey extends Str, TOut, TProcessorArgs extends AnyArr>(dialect: Dialect<TDialectKey, TOut, TProcessorArgs>): Info {
@@ -17,22 +15,26 @@ function dialectToInfo<TDialectKey extends Str, TOut, TProcessorArgs extends Any
   };
 }
 
-export function makeDialectProcessor<TDialectKey extends Str, TOut, TExtraProcessorArgs extends AnyArr>(
-  dialects: RArr<Dialect<TDialectKey, TOut, [file: Str, ...args: TExtraProcessorArgs]>>,
+export function skipFileArg<TOut, TArgs extends AnyArr>(func: (...args: TArgs) => TOut) {
+  return (_file: Str, ...args: TArgs): TOut => func(...args);
+}
+
+export function makeDialectProcessor<TKey extends Str, TOut, TArgs extends AnyArr>(
+  dialects: RArr<Dialect<TKey, TOut, [file: Str, ...args: TArgs]>>,
   async?: false,
-): DialectProcessor<TOut, [file: Str, ...args: TExtraProcessorArgs]>;
+): (file: Str, ...args: TArgs) => TOut;
 
-export function makeDialectProcessor<TOut, TDialectKey extends Str, TExtraProcessorArgs extends AnyArr>(
-  dialects: RArr<Dialect<TDialectKey, TOut | Promise<TOut>, [file: Str, ...args: TExtraProcessorArgs]>>,
+export function makeDialectProcessor<TOut, TKey extends Str, TArgs extends AnyArr>(
+  dialects: RArr<Dialect<TKey, TOut | Promise<TOut>, [file: Str, ...args: TArgs]>>,
   async: true,
-): DialectProcessor<Promise<TOut>, [file: Str, ...args: TExtraProcessorArgs]>;
+): (file: Str, ...args: TArgs) => TOut | Promise<TOut>;
 
-export function makeDialectProcessor<TOut, TDialectKey extends Str, TExtraProcessorArgs extends AnyArr>(
-  dialects: RArr<Dialect<TDialectKey, TOut | Promise<TOut>, [file: Str, ...args: TExtraProcessorArgs]>>,
+export function makeDialectProcessor<TOut, TKey extends Str, TArgs extends AnyArr>(
+  dialects: RArr<Dialect<TKey, TOut | Promise<TOut>, [file: Str, ...args: TArgs]>>,
   async: Bool = false,
-): DialectProcessor<TOut, [file: Str, ...args: TExtraProcessorArgs]> | DialectProcessor<Promise<TOut>, [file: Str, ...args: TExtraProcessorArgs]> {
+): ((file: Str, ...args: TArgs) => TOut) | ((file: Str, ...args: TArgs) => TOut | Promise<TOut>) {
   const extDict = dialects.flatMap(d => d.extensions.map(ext => [ext.toLowerCase(), d] as const)).toDict;
-  function getDialect(file: Str): Dialect<TDialectKey, TOut | Promise<TOut>, [file: Str, ...args: TExtraProcessorArgs]> {
+  function getDialect(file: Str): Dialect<TKey, TOut | Promise<TOut>, [file: Str, ...args: TArgs]> {
     const ext = fileExt(file);
     return extDict.get(ext)
       ?? err(
@@ -45,13 +47,13 @@ export function makeDialectProcessor<TOut, TDialectKey extends Str, TExtraProces
       );
   }
   if (async) {
-    return async (file, ...args: TExtraProcessorArgs) => {
+    return async (file, ...args: TArgs) => {
       const dialect = getDialect(file);
       return await orThrowAsync(async () => await dialect.processor(file, ...args), 'Failed to process file', { dialect: dialectToInfo(dialect), file });
     };
   }
   else {
-    return (file, ...args: TExtraProcessorArgs) => {
+    return (file, ...args: TArgs) => {
       const dialect = getDialect(file);
       return orThrow(() => dialect.processor(file, ...args) as TOut, 'Failed to process file', { dialect: dialectToInfo(dialect), file });
     };

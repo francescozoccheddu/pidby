@@ -1,14 +1,19 @@
 import { randomInt } from "./utils";
 
 export type Fact = {
-  readonly key: string;
-  readonly value: string;
+  readonly title: string;
+  readonly body: string;
 }
 
 const facts: readonly Fact[] = [
-  { key: "Best Pink Floyd song", value: "Wearing the Inside Out" },
-  { key: "Best Edgar Wright movie", value: "The World's End" },
-  { key: "Best pizza flavor", value: "Margherita" }
+  { title: "Best Pink Floyd song", body: "Wearing the Inside Out" },
+  { title: "Best Jefferson Airplane song", body: "Lather" },
+  { title: "Best The Rolling Stones song", body: "No Use In Crying" },
+  { title: "Best Edgar Wright movie", body: "The World's End" },
+  { title: "Best Tim Burton movie", body: "Ed Wood" },
+  { title: "Best Woody Allen movie", body: "Deconstructing Harry" },
+  { title: "Best David Fincher movie", body: "Zodiac" },
+  { title: "Best pizza flavor", body: "Margherita" },
 ];
 
 export function randomFact(): Fact {

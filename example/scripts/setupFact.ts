@@ -3,14 +3,14 @@ import { randomFact } from "./facts";
 const factEl = document.getElementById("fact");
 if (factEl) {
   const fact = randomFact();
-  // key  
+  // title
   const factsKeyElement = document.createElement("div");
-  factsKeyElement.classList.add("key");
-  factsKeyElement.textContent = fact.key;
+  factsKeyElement.classList.add("title");
+  factsKeyElement.textContent = fact.title;
   factEl.appendChild(factsKeyElement)
-  // value  
+  // body  
   const factsValueElement = document.createElement("div");
-  factsValueElement.classList.add("value");
-  factsValueElement.textContent = fact.value;
+  factsValueElement.classList.add("body");
+  factsValueElement.textContent = fact.body;
   factEl.appendChild(factsValueElement)
 }

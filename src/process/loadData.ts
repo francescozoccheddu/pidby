@@ -3,15 +3,15 @@ import { Info } from '@francescozoccheddu/ts-goodies/logs';
 import Ajv from 'ajv';
 import yaml from 'js-yaml';
 import { readTextFile } from 'pidby/utils/files';
-import { makeDialectProcessor } from 'pidby/utils/processDialect';
+import { makeDialectProcessor, skipFileArg } from 'pidby/utils/processDialect';
 
-function parseYaml(_file: Str, code: Str): Json {
+function parseYaml(code: Str): Json {
   return yaml.load(code, {
     schema: yaml.JSON_SCHEMA,
   }) as Json;
 }
 
-function parseJson(_file: Str, code: Str): Json {
+function parseJson(code: Str): Json {
   return JSON.parse(code) as Json;
 }
 
@@ -23,17 +23,25 @@ const loader = makeDialectProcessor([
   {
     key: JsonDialect.json,
     extensions: ['json'],
-    processor: parseJson,
+    processor: skipFileArg(parseJson),
   },
   {
     key: JsonDialect.yaml,
     extensions: ['yaml', 'yml'],
-    processor: parseYaml,
+    processor: skipFileArg(parseYaml),
   },
 ]);
 
+export function loadYaml(file: Str): Json {
+  return orThrow(() => parseYaml(readTextFile(file)), 'Failed to load YAML', { file });
+}
+
 export function loadJson(file: Str): Json {
-  return orThrow(() => loader(file, readTextFile(file)), 'Failed to load JSON', { file });
+  return orThrow(() => parseJson(readTextFile(file)), 'Failed to load JSON', { file });
+}
+
+export function loadData(file: Str): Json {
+  return orThrow(() => loader(file, readTextFile(file)), 'Failed to load data', { file });
 }
 
 export type JsonValidator<TValidJson extends RJson> = (obj: Unk) => TValidJson

@@ -1,16 +1,14 @@
-#fact
-  margin: 1em 0.5em
-  border: 1px solid gray
-  border-radius: 1em
-  padding: 0.75em
-  max-width: 30em
+@use "./box"
 
-  .key
+#fact
+  @extend %box
+
+  .title
     font-size: 1em
     font-weight: bold
     color: gray
     margin: 0.25em 0em
 
-  .value
+  .body
     font-size: 1.1em
     margin: 0.25em 0em

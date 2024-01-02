@@ -1,7 +1,7 @@
 import { orThrow } from '@francescozoccheddu/ts-goodies/errors';
 import path from 'path';
 import { Auto, auto, Config, Layout } from 'pidby/config';
-import { createJsonValidator, JsonValidator, loadJson } from 'pidby/process/loadJson';
+import { createJsonValidator, JsonValidator, loadData } from 'pidby/process/loadData';
 import { resolvePath } from 'pidby/utils/files';
 import schema from 'schema/config.json';
 
@@ -36,7 +36,7 @@ export function resolveConfPath(file: Str | Nul | Und, rootDir: Str): Str | Nul 
 export function loadConfig(file: Str, debug: Bool = false): Config {
   const rootDir = resolvePath(path.dirname(file), process.cwd());
   return orThrow(() => {
-    const rawConfig = loadJson(file);
+    const rawConfig = loadData(file);
     validateConfigJson(rawConfig);
     return {
       rootDir,
