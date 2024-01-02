@@ -43,6 +43,7 @@ export async function compileScript(file: Str, config: Config): Promise<Str> {
           checkJs: true,
           inlineSourceMap: config.debug,
           inlineSources: config.debug,
+          // FIXME: Fix source maps
           sourceRoot: `http://${config.rootDir}`,
         },
         filterRoot: config.rootDir,
