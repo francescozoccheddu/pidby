@@ -2,6 +2,13 @@
   "version": "1.0.0",
   "configurations": [
     {
+      "name": "Debug example",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
       "name": "Debug dev",
       "type": "node",
       "request": "launch",

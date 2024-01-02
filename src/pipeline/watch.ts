@@ -6,10 +6,10 @@ import { loadConfig } from 'pidby/loadConfig';
 import { Task, TaskRunner } from 'pidby/pipeline/runner';
 import { normPath, resolvePathToUrl } from 'pidby/utils/files';
 
-export async function watchTask(runner: TaskRunner, configFile: Str, delay: Num = 0.5): Promise<void> {
+export async function watchTask(runner: TaskRunner, configFile: Str, debug: Bool = true, delay: Num = 0.5): Promise<void> {
   function tryLoadConfig(): Config | Nul {
     try {
-      const config = loadConfig(configFile);
+      const config = loadConfig(configFile, debug);
       ensureValidConfig(config);
       const pageUrls = config.pageFiles.map(f => resolvePathToUrl(f, config.rootDir, runner.url));
       prDone('Loaded config', {
@@ -73,6 +73,6 @@ export async function watchTask(runner: TaskRunner, configFile: Str, delay: Num 
   await Promise.all(watchers.map(w => w.close()));
 }
 
-export function makeWatchTaskForConfigFile(configFile: Str): Task {
-  return (instance) => watchTask(instance, configFile);
+export function makeWatchTaskForConfigFile(configFile: Str, debug: Bool = true): Task {
+  return (instance) => watchTask(instance, configFile, debug);
 }

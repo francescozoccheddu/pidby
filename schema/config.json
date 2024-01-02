@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://github.com/francescozoccheddu/pidby/schemas/config.json",
+  "$id": "https://raw.githubusercontent.com/francescozoccheddu/pidby/main/schema/config.json",
   "title": "Pidby configuration",
   "description": "The Pidby configuration file",
   "type": "object",

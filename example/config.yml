@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../schema/config.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/francescozoccheddu/pidby/main/schema/config.json
 layout: "a4"
 pageFiles:
   - "/pages/page-1.pug"

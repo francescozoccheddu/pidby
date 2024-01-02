@@ -7,13 +7,6 @@ import postcss, { CssSyntaxError } from 'postcss';
 import importPlugin from 'postcss-import';
 import sass from 'sass';
 
-function addSourceMaps(css: Str, sourceMapObj: Unk): Str {
-  const smJson = JSON.stringify(sourceMapObj);
-  const smBase64 = (Buffer.from(smJson, 'utf8') || '').toString('base64');
-  const smComment = '/*# sourceMappingURL=data:application/json;charset=utf-8;base64,' + smBase64 + ' */';
-  return css + '\n'.repeat(2) + smComment;
-}
-
 export async function compileStyle(file: Str, config: Config): Promise<Str> {
   try {
     const dir = path.dirname(file);
@@ -45,11 +38,12 @@ export async function compileStyle(file: Str, config: Config): Promise<Str> {
       }),
       autoprefixerPlugin({}),
     ])
-      .process(config.debug
-        ? addSourceMaps(sassResult.css, sassResult.sourceMap)
-        : sassResult.css, {
+      .process(sassResult.css, {
         from: file,
-        map: config.debug,
+        map: config.debug && {
+          inline: true,
+          prev: JSON.stringify(sassResult.sourceMap),
+        },
       });
     warnings.push(...postcssResult.warnings().map(w => ({
       message: w.text,

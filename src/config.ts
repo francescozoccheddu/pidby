@@ -30,15 +30,22 @@ export type Config = R<{
   rootDir: Str;
 }>;
 
-export function resolveTsConfigFile(config: Config, dir: Str): Str | Nul {
+export function resolveTsConfigFile(config: Config, dir: Str, warnIfNotFound: Bool = false): Str | Nul {
   if (config.tsConfigFile === null) {
     return null;
   }
   if (config.tsConfigFile !== auto) {
     return config.tsConfigFile;
   }
-  const found = getTsconfig(dir)?.path;
-  return (found && isSubFile(found, config.rootDir)) ? found : null;
+  const parent = getTsconfig(dir)?.path;
+  const found = (parent && isSubFile(parent, config.rootDir)) ? parent : null;
+  if (!found && warnIfNotFound) {
+    prWarn('No \'tsconfig.json\' found', {
+      hint: 'Add an empty \'tsconfig.json\' file inside your project directory or set \'tsConfigFile\' to null in the config to silence this warning',
+      contextDir: dir,
+    });
+  }
+  return found;
 }
 
 export function resolveNodeModulesDir(config: Config, dir: Str): Str | Nul {

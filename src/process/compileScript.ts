@@ -6,6 +6,7 @@ import nodeResolvePlugin from '@rollup/plugin-node-resolve';
 import typescriptPlugin from '@rollup/plugin-typescript';
 import path from 'path';
 import { Config, resolveNodeModulesDir, resolveTsConfigFile } from 'pidby/config';
+import { fileExt } from 'pidby/utils/files';
 import { OutputChunk, OutputOptions, rollup, RollupOptions } from 'rollup';
 import inMemoryPlugin from 'rollup-plugin-memory-fs';
 
@@ -33,17 +34,18 @@ export async function compileScript(file: Str, config: Config): Promise<Str> {
     plugins: [
       inMemoryPlugin(),
       typescriptPlugin({
-        tsconfig: resolveTsConfigFile(config, dir) ?? false,
+        tsconfig: resolveTsConfigFile(config, dir, fileExt(file) === 'ts') ?? false,
         compilerOptions: {
           module: 'ESNext',
           moduleResolution: 'Classic',
           target: 'ES5',
           allowJs: true,
-          checkJs: false,
-          baseUrl: config.rootDir,
-          rootDir: config.rootDir,
-          sourceMap: config.debug,
+          checkJs: true,
+          inlineSourceMap: config.debug,
+          inlineSources: config.debug,
+          sourceRoot: `http://${config.rootDir}`,
         },
+        filterRoot: config.rootDir,
       }),
       commonJsPlugin(),
       nodeResolvePlugin({
