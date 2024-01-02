@@ -60,6 +60,7 @@ export class TaskRunner {
   set config(config: Config | Nul) {
     this.unconfig();
     if (config) {
+      this._config = config;
       ensureValidConfig(config);
       this._server.rootDir = config.rootDir;
       this._server.resolver = makeResolver(config);
@@ -105,6 +106,7 @@ function makeResolver(config: Config): Resolver {
       debugName: 'page',
       extensions: ['pug', 'html', 'ejs'],
       resolver(file): ResolvedFile {
+        // TODO: inject keyboard controls and live reloading
         return {
           data: compilePage(file, config),
           mimeType: 'text/html',
