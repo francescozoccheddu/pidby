@@ -18,7 +18,7 @@ export async function compileScript(file: Str, config: Config): Promise<Str> {
     output: {
       format: 'iife',
       sourcemap: config.debug ? 'inline' : false,
-      sourcemapBaseUrl: config.rootDir,
+      sourcemapBaseUrl: `file://${config.rootDir}`,
       sourcemapPathTransform: file => path.basename(file),
     },
     onLog(level, log) {

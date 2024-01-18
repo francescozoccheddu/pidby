@@ -3,6 +3,7 @@ import '@francescozoccheddu/ts-goodies/globals/augmentations';
 import { orThrowAsync } from '@francescozoccheddu/ts-goodies/errors';
 import { prDone, prExc } from '@francescozoccheddu/ts-goodies/logs';
 import fs from 'fs';
+import { CaptureEngine } from 'pidby/capture/capturePdfs';
 import { loadConfig } from 'pidby/loadConfig';
 import { makeCaptureTaskForConfig } from 'pidby/pipeline/capture';
 import { run } from 'pidby/pipeline/runner';
@@ -19,10 +20,10 @@ async function cmdDev(configFile: Str, port: Num): Promise<void> {
   });
 }
 
-async function cmdRun(configFile: Str, outFile: Str): Promise<void> {
+async function cmdRun(configFile: Str, outFile: Str, engine: CaptureEngine): Promise<void> {
   await orPrintExc(async () => {
     const config = loadConfig(configFile);
-    const pdf = await run(makeCaptureTaskForConfig(config));
+    const pdf = await run(makeCaptureTaskForConfig(config, engine));
     fs.writeFileSync(outFile, pdf);
     prDone('PDF file generated successfully', { outputFile: outFile });
   });
@@ -57,7 +58,7 @@ function main(): void {
       argv => cmdDev(argv.config_file, argv.port),
     )
     .command(
-      'run <config_file> <out_file>',
+      'run <config_file> <out_file> [-e <engine>]',
       'Build the specified config',
       yargs => yargs
         .positional('config_file', {
@@ -70,8 +71,17 @@ function main(): void {
           type: 'string',
           demandOption: true,
         })
+        .option('engine', {
+          describe: 'The PDF capture engine',
+          choices: ['wkhtmltopdf', 'puppeteer'],
+          default: 'puppeteer',
+          alias: 'e',
+        })
         .strict(),
-      argv => cmdRun(argv.config_file, argv.out_file),
+      argv => cmdRun(argv.config_file, argv.out_file, {
+        'puppeteer': CaptureEngine.puppeteer,
+        'wkhtmltopdf': CaptureEngine.wkHtmlToPdf,
+      }[argv.engine]!),
     )
     .scriptName(appInfo.name)
     .demandCommand()
