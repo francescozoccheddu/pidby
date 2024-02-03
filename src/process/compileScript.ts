@@ -35,22 +35,23 @@ export async function compileScript(file: Str, config: Config): Promise<Str> {
     },
     plugins: [
       inMemoryPlugin(),
+      commonJsPlugin(),
+      nodeResolvePlugin({
+        moduleDirectories: [resolveNodeModulesDir(config, dir)].nonNul,
+        browser: true,
+        extensions: ['.ts', '.js'],
+      }),
       typescriptPlugin({
         tsconfig: resolveTsConfigFile(config, dir, fileExt(file) === 'ts') ?? false,
         compilerOptions: {
+          target: 'ES6',
           module: 'ESNext',
-          moduleResolution: 'Classic',
-          target: 'ES5',
           allowJs: true,
           checkJs: true,
           inlineSourceMap: config.debug,
           inlineSources: config.debug,
         },
         filterRoot: config.rootDir,
-      }),
-      commonJsPlugin(),
-      nodeResolvePlugin({
-        moduleDirectories: [resolveNodeModulesDir(config, dir)].nonNul,
       }),
       babelPlugin({
         extensions: ['.ts', '.js', '.json'],

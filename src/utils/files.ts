@@ -37,7 +37,7 @@ export function findParentPaths(from: RArr<Str>, name: Str, directory: Bool, mul
     return walkUp(root,
       (dir: Str) => {
         depth += 1;
-        if (depth > maxDepth || (maxDir !== null && isSubDirOrEq(maxDir, dir))) {
+        if (depth > maxDepth || (maxDir !== null && !isSubDirOrEq(dir, maxDir))) {
           return true;
         }
         const candidates = [p.join(dir, name), dir];
