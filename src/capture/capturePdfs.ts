@@ -6,7 +6,7 @@ import wkhtmltopdf from 'wkhtmltopdf';
 export async function capturePdfsWithPuppeteer(urls: RArr<Str>, layout: Layout): Promise<RArr<Buffer>> {
   return await orThrowAsync(async () => {
     const browser = await launchPuppeteer({
-      headless: 'new',
+      headless: true,
     });
     const page = await browser.newPage();
     const buffers: Buffer[] = [];

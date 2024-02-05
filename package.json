@@ -1,6 +1,6 @@
 {
   "name": "@francescozoccheddu/pidby",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "PDF creator from web pages with built-in Pug, EJS, Sass and TypeScript support",
   "author": "Francesco Zoccheddu (https://github.com/francescozoccheddu/)",
   "homepage": "https://github.com/francescozoccheddu/pidby#readme",
