@@ -37,7 +37,7 @@ export async function compileScript(file: Str, config: Config): Promise<Str> {
       inMemoryPlugin(),
       commonJsPlugin(),
       nodeResolvePlugin({
-        moduleDirectories: [resolveNodeModulesDir(config, dir)].nonNul,
+        modulePaths: [resolveNodeModulesDir(config, dir)].nonNul,
         browser: true,
         extensions: ['.ts', '.js'],
       }),
