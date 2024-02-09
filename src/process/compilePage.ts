@@ -14,9 +14,11 @@ enum PageDialect {
   ejs = 'ejs'
 }
 
-function makeDataLoader<TKey extends Str>(name: TKey, loader: (file: Str) => RJson, config: Config, dir: Str): Obj<TKey, (file: Str) => RJson> {
+function makeDataLoader<TKey extends Str>(name: TKey, loader: (file: Str) => RJson, config: Config, dir: Str, failIfNotExists: false): Obj<TKey, (file: Str) => RJson | Und>;
+function makeDataLoader<TKey extends Str>(name: TKey, loader: (file: Str) => RJson, config: Config, dir: Str, failIfNotExists: true): Obj<TKey, (file: Str) => RJson>;
+function makeDataLoader<TKey extends Str>(name: TKey, loader: (file: Str) => RJson, config: Config, dir: Str, failIfNotExists: Bool): Obj<TKey, (file: Str) => RJson | Und> {
   return {
-    [name]: function (file: Str): RJson {
+    [name]: function (file: Str): RJson | Und {
       if (arguments.length !== 1) {
         err(`The '${name}' function got ${arguments.length === 0 ? 'no' : 'more than one'} argument`, { gotArgCount: arguments.length, requiredArgCount: 1 });
       }
@@ -29,7 +31,12 @@ function makeDataLoader<TKey extends Str>(name: TKey, loader: (file: Str) => RJs
         { file, rootDir: config.rootDir },
       );
       if (!isExistingFile(resolvedFile)) {
-        err(`The file passed to the '${name}' function does not exist`, { file: file, resolvedFile });
+        if (failIfNotExists) {
+          err(`The file passed to the '${name}' function does not exist`, { file: file, resolvedFile });
+        }
+        else {
+          return undefined;
+        }
       }
       if (!isSubDirOrEq(resolvedFile, config.rootDir)) {
         err(`The file passed to the '${name}' function is outside the project root`, { file: file, resolvedFile, rootDir: config.rootDir });
@@ -49,8 +56,10 @@ function makeLocals(file: Str, config: Config): StrObj {
       name: config.layout,
       ...layoutSizes[config.layout],
     },
-    ...makeDataLoader('json', loadJson, config, dir),
-    ...makeDataLoader('yaml', loadYaml, config, dir),
+    ...makeDataLoader('json', loadJson, config, dir, true),
+    ...makeDataLoader('yaml', loadYaml, config, dir, true),
+    ...makeDataLoader('jsonOrUndef', loadJson, config, dir, false),
+    ...makeDataLoader('yamlOrUndef', loadYaml, config, dir, false),
     page: config.pageFiles.findIndex(f => isSamePath(file, f)),
   };
 }
