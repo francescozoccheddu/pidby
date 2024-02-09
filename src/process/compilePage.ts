@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { Config } from 'pidby/config';
 import { loadJson, loadYaml } from 'pidby/process/loadData';
-import { isExistingFile, isSamePath, isSubDirOrEq, readTextFile, resolvePath } from 'pidby/utils/files';
+import { isExistingFile, isSamePath, isSubDirOrEq, readTextFile, resolvePath, resolvePathToUrl } from 'pidby/utils/files';
 import { layoutSizes } from 'pidby/utils/layouts';
 import { makeDialectProcessor } from 'pidby/utils/processDialect';
 import pug from 'pug';
@@ -97,6 +97,7 @@ function makeLocals(file: Str, config: Config): StrObj {
     ...makeFsExists('isDir', 'dir', config, dir),
     ...makeFsExists('isFileOrDir', 'fileOrDir', config, dir),
     page: config.pageFiles.findIndex(f => isSamePath(file, f)),
+    pages: config.pageFiles.map(file => resolvePathToUrl(file, config.rootDir, '/')),
   };
 }
 

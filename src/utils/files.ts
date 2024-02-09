@@ -88,7 +88,7 @@ export function pathToUrl(path: Str): Str {
   return p.posix.normalize(path.replaceAll(p.win32.sep, p.posix.sep));
 }
 
-export function resolvePathToUrl(file: Str, rootDir: Str, baseUrl: Str): Str {
+export function resolvePathToUrl(file: Str, rootDir: Str, baseUrl: Str = '/'): Str {
   const relFile = pathToUrl(p.relative(rootDir, file)).stripStart('.').stripStart('/');
   return joinUrl(baseUrl, relFile);
 }
