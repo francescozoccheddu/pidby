@@ -11,7 +11,7 @@ html
     p 
       span This is a dynamically loaded YAML:
       #data
-        each val, key in yaml("/data/data.yml")
+        each val, key in yamlFile("/data/data.yml")
           .key #{key}
           .value #{val}
     script(src="/scripts/setupToday.ts" type="text/javascript")
