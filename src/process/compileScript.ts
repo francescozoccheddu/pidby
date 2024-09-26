@@ -66,7 +66,7 @@ export async function compileScript(file: Str, config: Config): Promise<Str> {
         const { output } = await bundle.generate(inputOptions.output as OutputOptions);
         return output
           .filter(o => o.type === 'chunk')
-          .map(o => (o as OutputChunk).code)
+          .map(o => (o as Unk as OutputChunk).code)
           .join('\n;\n');
       } finally {
         await bundle.close();

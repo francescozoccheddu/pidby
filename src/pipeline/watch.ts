@@ -1,5 +1,5 @@
 import { prDone, prExc } from '@francescozoccheddu/ts-goodies/logs';
-import { watch as chokidarWatch, WatchOptions } from 'chokidar';
+import { ChokidarOptions, watch as chokidarWatch } from 'chokidar';
 import path from 'path';
 import { Config, ensureValidConfig } from 'pidby/config';
 import { loadConfig } from 'pidby/loadConfig';
@@ -51,7 +51,7 @@ export async function watchTask(runner: TaskRunner, configFile: Str, debug: Bool
     onFileChange();
   }
   updateConfig();
-  const watcherOpts: WatchOptions = {
+  const watcherOpts: ChokidarOptions = {
     ignoreInitial: true,
   };
   const watchers = [

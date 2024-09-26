@@ -12,7 +12,7 @@ export async function capturePdfsWithPuppeteer(urls: RArr<Str>, layout: Layout):
     const buffers: Buffer[] = [];
     for (const url of urls) {
       await page.goto(url, { waitUntil: 'networkidle0' });
-      buffers.push(await page.pdf({ format: layout, pageRanges: '1' }));
+      buffers.push(Buffer.from(await page.pdf({ format: layout, pageRanges: '1' })));
     }
     await browser.close();
     return buffers;
@@ -36,7 +36,7 @@ export async function capturePdfsWithWkHtmlToPdf(urls: RArr<Str>, layout: Layout
   return await orThrowAsync(async () => {
     return await Promise.all(urls.map(async url => {
       const stream = wkhtmltopdf(url, { pageSize });
-      const buffers: (Str | Buffer)[] = [];
+      const buffers: Unk[] = [];
       for await (const data of stream) {
         buffers.push(data);
       }

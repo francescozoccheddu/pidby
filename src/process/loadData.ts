@@ -1,6 +1,6 @@
 import { orThrow } from '@francescozoccheddu/ts-goodies/errors';
 import { Info } from '@francescozoccheddu/ts-goodies/logs';
-import Ajv from 'ajv';
+import { Ajv } from 'ajv';
 import yaml from 'js-yaml';
 import { readTextFile } from 'pidby/utils/files';
 import { makeDialectProcessor, skipFileArg } from 'pidby/utils/processDialect';
