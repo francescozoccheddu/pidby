@@ -25,7 +25,17 @@
       "title": "Layout",
       "description": "The layout of the output PDF document",
       "enum": [
-        "a4"
+        "a0",
+        "a1",
+        "a2",
+        "a3",
+        "a4",
+        "a5",
+        "a6",
+        "letter",
+        "legal",
+        "tabloid",
+        "ledger"
       ]
     },
     "pageFiles": {
